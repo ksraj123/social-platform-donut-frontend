@@ -88,6 +88,11 @@ class Navigation extends Component {
               link="/pinned-posts"
             /> */}
             <ListItem
+              name="Wikis"
+              className={this.props.wikis ? "active" : "inactive"}
+              link="/wikis"
+            />
+            <ListItem
               name="Organization"
               className={this.props.org ? "active" : "inactive"}
               link="/organization"
