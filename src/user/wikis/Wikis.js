@@ -4,10 +4,10 @@ import "./wikis.scss";
 import Navigation from "../dashboard/navigation/navigation";
 import { getWikis } from "../../actions/wikisAction";
 import { Drawer, Button, List, ListItem, ListItemText } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 
 // Things to implement
 // Navbar displaying pages - it will have option to create a new page and delete page when hovering over that page
+// known styling issue with Navigator - on closing is goes all the way to the side
 // Option to edit in each page, and when editing a save button would appear
 
 class Wikis extends Component {
@@ -35,43 +35,32 @@ class Wikis extends Component {
   }
 
   render() {
-    const useStyles = makeStyles({
-        list: {
-          width: 250,
-        },
-        fullList: {
-          width: 'auto',
-        },
-      });
-
     return(
         <div className="wikis">
             <div className="navigation">
-            <Navigation wikis={this.state.wikis}></Navigation>
+              <Navigation wikis={this.state.wikis}></Navigation>
             </div>
-            <div className="news" id="wikis">
-            <React.Fragment>
+            <div id="wikis">
                 <Button onClick={this.toggleDrawer}>Left</Button>
                 <Drawer 
-                  anchor={"left"} 
-                  open={this.state.wikiNavigator}
-                  PaperProps={{ style: { position: 'absolute' } }}
-                  BackdropProps={{ style: { position: 'absolute' } }} 
-                  ModalProps={{
+                    anchor={"left"} 
+                    open={this.state.wikiNavigator}
+                    PaperProps={{ style: { position: 'absolute' } }}
+                    BackdropProps={{ style: { position: 'absolute' } }} 
+                    ModalProps={{
                     container: document.getElementById('wikis'),
                     style: { position: 'absolute' }
-                  }}
-                  variant="temporary"
-                  onClose={this.toggleDrawer}>
-                  <List>
-                    <ListItem>
-                      <ListItemText>
-                        Saurabh
-                      </ListItemText>
-                    </ListItem>
-                  </List>
+                    }}
+                    variant="temporary"
+                    onClose={this.toggleDrawer}>
+                    <List className="list">
+                      <ListItem>
+                        <ListItemText>
+                          Saurabh
+                        </ListItemText>
+                      </ListItem>
+                    </List>
                 </Drawer>
-            </React.Fragment>
             </div>
         </div>
     )
