@@ -1,22 +1,91 @@
 .wikis {
-    display: flex;
-    min-height: 100vh;
-    height: auto;
-    font-family: "Inter";
-    .navigation {
-      flex: 0.5;
-      border-right: solid 1px #dfe9f1;
+  display: flex;
+  min-height: 100vh;
+  height: auto;
+  font-family: "Inter";
+  height: 100vh;
+  overflow: hidden;
+  #wikis {
+    position: relative;
+    flex: 3;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-left: 50px;
+    padding-right: 50px;
+    .vc {
+      display: flex;
+      align-items: center;
     }
-    .list{
-        width: 250px;
-    }
-    h2 {
-      font-size: 20px;
-      font-weight: bold;
-      font-family: "Inter";
-    }
-    #wikis {
-      position: relative;
-      flex: 3;
+    .wikis-top-controls {
+      display: flex;
+      justify-content: flex-end;
+      * {
+        margin: 0 5px;
+        display: flex;
+        align-items: center;
+      }
+      .btn {
+        padding-left: 0.25rem !important;
+      }
     }
   }
+  .nav-drawer {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    padding: 20px 2px;
+    background-color: white;
+
+    .arrow-right {
+      background-image: url("./assets/arrowRight.svg");
+      background-repeat: no-repeat;
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .wiki-editor {
+    padding-top: 50px;
+  }
+  .page {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    width: 100%;
+    .page-header{
+        padding-bottom: 20px;
+        border-bottom: 2px solid #dfe9f1;
+        margin-bottom: 20px;
+    }
+  }
+  .navigation {
+    flex: 0.5 1;
+    border-right: solid 1px #dfe9f1;
+  }
+  .nav {
+    width: 250px;
+    .nav-header {
+      display: flex;
+      justify-content: flex-end;
+      .nav-button-edit,
+      .nav-button-new {
+        background-color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+      }
+    }
+    .nav-item {
+      cursor: pointer;
+    }
+    .nav-item:hover {
+      background-color: rgba(26, 115, 232, 0.1);
+    }
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Inter";
+  }
+  .Side{
+      margin-top: 130px;
+  }
+}

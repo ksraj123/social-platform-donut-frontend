@@ -8,7 +8,7 @@ export const getWikis = () => async (dispatch) => {
     const res = await axios.get(`${BASE_URL}/wikis`)
       dispatch({
         type: GET_WIKIS,
-        payload: `I am the payload of GET_WIKIS action = ${res.data.wikis}`
+        payload: res.data.wikis
       })
     } catch(error) {
       dispatch(errorHandler(error))
