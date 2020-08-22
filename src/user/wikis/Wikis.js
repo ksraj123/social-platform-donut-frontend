@@ -8,6 +8,7 @@ import Editor from "./Editor/Editor";
 import Sidebar from "./Sidebar/Sidebar";
 import { BASE_URL } from "../../actions/baseApi";
 import { getWikis } from "../../actions/wikisAction";
+import { ToastContainer, toast } from "react-toastify";
 
 class Wikis extends Component {
   constructor(props) {
@@ -23,6 +24,7 @@ class Wikis extends Component {
       sidebarEditor: false,
       spinner: "Loading...",
     };
+    this.axiosCancel = Axios.CancelToken.source();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,21 +66,25 @@ class Wikis extends Component {
           spinner: "Switing Page.... ",
         },
         async () => {
-          let resp = await Axios.get(`${BASE_URL}/wikis/pages?title=${page}`);
-          resp = resp.data;
-          for (let i = 0; i < resp.wikis.length; i++) {
-            if (resp.wikis[i].title === page.title) {
-              pos = i;
-              break;
-            }
+          try {
+            let wikis = (
+              await Axios.get(`${BASE_URL}/wikis/pages?title=${page}`, {
+                cancelToken: this.axiosCancel.token,
+              })
+            ).data.wikis;
+            wikis.forEach((ele, index) => {
+              if (ele.title === page.title) pos = index;
+            });
+            this.setState({
+              spinner: "",
+              allWikis: wikis,
+              currentPage: pos,
+              viewHistory: false,
+              historyMode: false,
+            });
+          } catch (err) {
+            console.log(err.message);
           }
-          this.setState({
-            spinner: "",
-            currentPage: pos,
-            viewHistory: false,
-            historyMode: false,
-            allWikis: resp.wikis,
-          });
         }
       );
     } else {
@@ -95,9 +101,11 @@ class Wikis extends Component {
       comments: page.comments,
     };
     const findIndexOfPage = (arr, page) => {
-      for (let i = 0; i < arr.length; i++)
-        if (arr[i].title === page.title) return i;
-      return 0;
+      let pos = 0;
+      arr.forEach((ele, index) => {
+        if (ele.title === page.title) pos = index;
+      });
+      return pos;
     };
     if (!newPage && !sidebar) {
       this.setState(
@@ -105,14 +113,22 @@ class Wikis extends Component {
           spinner: "Saving... ",
         },
         async () => {
-          const wikis = (await Axios.put(endpoint, data)).data.wikis;
-          const index = findIndexOfPage(wikis, page);
-          this.setState({
-            spinner: "",
-            editorMode: false,
-            currentPage: index,
-            allWikis: [...wikis],
-          });
+          try {
+            const wikis = (
+              await Axios.put(endpoint, data, {
+                cancelToken: this.axiosCancel.token,
+              })
+            ).data.wikis;
+            const index = findIndexOfPage(wikis, page);
+            this.setState({
+              spinner: "",
+              editorMode: false,
+              currentPage: index,
+              allWikis: [...wikis],
+            });
+          } catch (err) {
+            console.log(err.message);
+          }
         }
       );
     } else if (sidebar) {
@@ -121,14 +137,22 @@ class Wikis extends Component {
           spinner: "Saving...",
         },
         async () => {
-          const wikis = (await Axios.put(endpoint, data)).data.wikis;
-          this.setState({
-            spinner: "",
-            currentPage: 1,
-            editorMode: false,
-            allWikis: [...wikis],
-            sidebarEditor: false,
-          });
+          try {
+            const wikis = (
+              await Axios.put(endpoint, data, {
+                cancelToken: this.axiosCancel.token,
+              })
+            ).data.wikis;
+            this.setState({
+              spinner: "",
+              currentPage: 1,
+              editorMode: false,
+              allWikis: [...wikis],
+              sidebarEditor: false,
+            });
+          } catch (err) {
+            console.log(err.message);
+          }
         }
       );
     } else {
@@ -138,19 +162,27 @@ class Wikis extends Component {
             spinner: "Creating New Page...",
           },
           async () => {
-            const wikis = (await Axios.post(endpoint, data)).data.wikis;
-            const index = findIndexOfPage(wikis, page);
-            this.setState({
-              spinner: "",
-              editorMode: false,
-              currentPage: index,
-              allWikis: [...wikis],
-              newPageEditor: false,
-            });
+            try {
+              const wikis = (
+                await Axios.post(endpoint, data, {
+                  cancelToken: this.axiosCancel.token,
+                })
+              ).data.wikis;
+              const index = findIndexOfPage(wikis, page);
+              this.setState({
+                spinner: "",
+                editorMode: false,
+                currentPage: index,
+                allWikis: [...wikis],
+                newPageEditor: false,
+              });
+            } catch (err) {
+              console.log(err.message);
+            }
           }
         );
       } else {
-        console.log("Page with that title already exsits!");
+        toast.error("Page with that title already exsits!");
       }
     }
   };
@@ -162,17 +194,22 @@ class Wikis extends Component {
         spinner: "Deleting Page...",
       },
       async () => {
-        const wikis = (
-          await Axios.delete(`${BASE_URL}/wikis/pages`, {
-            data: { title: allWikis[currentPage].title },
-          })
-        ).data.wikis;
-        this.setState({
-          spinner: "",
-          currentPage: 1,
-          editorMode: false,
-          allWikis: [...wikis],
-        });
+        try {
+          const wikis = (
+            await Axios.delete(`${BASE_URL}/wikis/pages`, {
+              data: { title: allWikis[currentPage].title },
+              cancelToken: this.axiosCancel.token,
+            })
+          ).data.wikis;
+          this.setState({
+            spinner: "",
+            currentPage: 1,
+            editorMode: false,
+            allWikis: [...wikis],
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
       }
     );
   };
@@ -191,15 +228,20 @@ class Wikis extends Component {
         spinner: "Time Travelling...",
       },
       async () => {
-        this.setState({
-          spinner: "",
-          viewHistory: false,
-          allWikis: (
-            await Axios.get(
-              `${BASE_URL}/wikis/pages?title=${title}&ref=${commit}`
-            )
-          ).data.wikis,
-        });
+        try {
+          this.setState({
+            spinner: "",
+            viewHistory: false,
+            allWikis: (
+              await Axios.get(
+                `${BASE_URL}/wikis/pages?title=${title}&ref=${commit}`,
+                { cancelToken: this.axiosCancel.token }
+              )
+            ).data.wikis,
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
       }
     );
   };
@@ -217,10 +259,10 @@ class Wikis extends Component {
     return (
       <div className="wikis">
         <Layout
+          isAdmin={isAdmin}
+          allWikis={allWikis}
           wikis={this.state.wikis}
           spinner={this.state.spinner}
-          allWikis={allWikis}
-          isAdmin={isAdmin}
         >
           <React.Fragment>
             {!editorMode && allWikis.length !== 0 && (
@@ -260,10 +302,25 @@ class Wikis extends Component {
                 }
               />
             )}
+            <ToastContainer
+              draggable
+              rtl={false}
+              pauseOnHover
+              closeOnClick
+              pauseOnFocusLoss
+              autoClose={5000}
+              position="top-right"
+              newestOnTop={false}
+              hideProgressBar={false}
+            />
           </React.Fragment>
         </Layout>
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    this.axiosCancel.cancel("Axios request cancelled - Component Unmounted");
   }
 }
 

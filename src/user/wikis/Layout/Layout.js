@@ -1,6 +1,6 @@
 import React from "react";
 import "./Layout.scss";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import { BASE_URL } from "../../../actions/baseApi";
 import LoadingOverlay from "react-loading-overlay";
 import GitHubIcon from "@material-ui/icons/GitHub";
@@ -30,7 +30,7 @@ const Layout = (props) => (
         <h1 className="wikis-heading">Wikis</h1>
         {props.allWikis === "NO_ACCESS_TOKEN" ? (
           <div className="wikis-not-found">
-            {props.isAdmin ? (
+            {props.isAdmin === "true" ? (
               <a href={`${BASE_URL}/wikis/oauth-check`}>
                 <Button variant="light">
                   <GitHubIcon />

@@ -6,10 +6,10 @@ import { Timeline } from "antd";
 const History = (props) => (
   <div className="history">
     <Timeline>
-    {props.page.history.map((ele) => {
+    {props.page.history.map((ele, index) => {
       const body = JSON.parse(ele.body);
       return (
-        <Timeline.Item>
+        <Timeline.Item key={index}>
         <div
           className="history-item"
           onClick={() => props.view(body.commit)}
