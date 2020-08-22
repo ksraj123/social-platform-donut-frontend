@@ -8,11 +8,12 @@ import * as Showdown from "showdown";
 import ReactMde from "react-mde";
 import "./Editor.scss";
 
-class Sidebar extends Component {
+class Editor extends Component {
   state = {
     selectedTab: "write",
     title: this.props.page?.title,
-    content: this.props.page?.content
+    content: this.props.page?.content,
+    comments: ""
   };
 
   handleSave = () => {
@@ -20,6 +21,7 @@ class Sidebar extends Component {
       {
         title: this.state.title,
         content: this.state.content,
+        comments: this.state.comments,
         history: this.props.page?.history
       },
       this.props.newPage,
@@ -33,6 +35,10 @@ class Sidebar extends Component {
 
   setTitle = evt => {
     this.setState({ title: evt.target.value });
+  };
+
+  setComments = evt => {
+    this.setState({ comments: evt.target.value });
   };
 
   render() {
@@ -49,7 +55,7 @@ class Sidebar extends Component {
           <Button 
             variant="danger" 
             onClick={this.props.delete} 
-            disabled={!this.props.delete}>
+            disabled={this.props.sidebar || this.props.newPage || this.props.page.title==="Home"}>
             <span className="vc">
               <DeleteOutlinedIcon />
               Delete
@@ -70,7 +76,7 @@ class Sidebar extends Component {
             as="input"
             name="pageTitle"
             className="searchbar"
-            readOnly={this.props.sidebar}
+            readOnly={!this.props.newPage}
           />
         </Form>
         <ReactMde
@@ -84,7 +90,12 @@ class Sidebar extends Component {
         />
         <Form>
           <Form.Label className="field-title">Comments</Form.Label>
-          <Form.Control as="input" name="pageTitle" className="searchbar" />
+          <Form.Control 
+            as="input" 
+            name="comments" 
+            value={this.state.comments}
+            onChange={this.setComments}
+            className="searchbar" />
         </Form>
         <div className="wikis-top-controls">
           <Button variant="primary" onClick={this.handleSave}>
@@ -98,4 +109,4 @@ class Sidebar extends Component {
   }
 }
 
-export default Sidebar;
+export default Editor;

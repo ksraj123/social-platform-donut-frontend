@@ -1,9 +1,13 @@
 .wiki-editor {
-  padding: 0px 50px;
+  padding: 50px 50px;
   .wikis-top-controls {
-    margin-bottom: 50px;
     display: flex;
+    margin-bottom: 50px;
     justify-content: flex-end;
+    .vc {
+      display: flex;
+      align-items: center;
+    }
     * {
       margin: 0 5px;
       display: flex;
@@ -17,11 +21,11 @@
     display: flex;
     align-items: center;
     label {
+      margin: 0;
+      height: 100%;
+      width: 150px;
       display: flex;
       align-items: center;
-      height: 100%;
-      margin: 0;
-      width: 150px;
     }
     margin-bottom: 50px;
   }
@@ -34,8 +38,8 @@
           margin-bottom: 0;
         }
         .selected {
-          background-color: #ffffff;
           border: none;
+          background-color: #ffffff;
         }
       }
       .mde-tabs:active {
