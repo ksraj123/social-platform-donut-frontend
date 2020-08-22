@@ -1,8 +1,8 @@
 import React from "react";
 import "./Page.scss";
 import History from "../History/History";
-import Button from "react-bootstrap/Button";
 import ReactMarkdown from "react-markdown";
+import Button from "react-bootstrap/Button";
 import HistoryIcon from "@material-ui/icons/History";
 import EditButton from "@material-ui/icons/EditOutlined";
 import NewPageButton from "@material-ui/icons/DescriptionOutlined";

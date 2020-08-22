@@ -1,21 +1,20 @@
-import { GET_WIKIS } from '../actions/types'
+import { GET_WIKIS } from "../actions/types";
 const initialState = {
-  wikis: ""
-}
+  wikis: "",
+};
 
 export default (state = initialState, action) => {
-    switch(action.type) {
-      case GET_WIKIS: {
-        console.log(`Action Recieved in reducer! ${action.type}`);
-        // console.log(`And its payload is = ${action.payload}`);
-        console.log(action.payload);
-        return {
-          ...state,
-          wikis: action.payload
-        }
-      }
-      default:{
-        return state
-      }
+  switch (action.type) {
+    case GET_WIKIS: {
+      console.log(`Action Recieved in reducer! ${action.type}`);
+      console.log(action.payload);
+      return {
+        ...state,
+        wikis: action.payload,
+      };
+    }
+    default: {
+      return state;
     }
   }
+};
