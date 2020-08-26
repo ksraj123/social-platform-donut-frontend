@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./wikis.scss";
-import Axios from "axios";
+import axios from 'axios';
 import Page from "./Page/Page";
 import Layout from "./Layout/Layout";
 import Editor from "./Editor/Editor";
@@ -24,7 +24,7 @@ class Wikis extends Component {
       sidebarEditor: false,
       spinner: "Loading...",
     };
-    this.axiosCancel = Axios.CancelToken.source();
+    this.axiosCancel = axios.CancelToken.source();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -68,7 +68,7 @@ class Wikis extends Component {
         async () => {
           try {
             let wikis = (
-              await Axios.get(`${BASE_URL}/wikis/pages?title=${page}`, {
+              await axios.get(`${BASE_URL}/wikis/pages?title=${page}`, {
                 cancelToken: this.axiosCancel.token,
               })
             ).data.wikis;
@@ -115,7 +115,7 @@ class Wikis extends Component {
         async () => {
           try {
             const wikis = (
-              await Axios.put(endpoint, data, {
+              await axios.put(endpoint, data, {
                 cancelToken: this.axiosCancel.token,
               })
             ).data.wikis;
@@ -139,7 +139,7 @@ class Wikis extends Component {
         async () => {
           try {
             const wikis = (
-              await Axios.put(endpoint, data, {
+              await axios.put(endpoint, data, {
                 cancelToken: this.axiosCancel.token,
               })
             ).data.wikis;
@@ -164,7 +164,7 @@ class Wikis extends Component {
           async () => {
             try {
               const wikis = (
-                await Axios.post(endpoint, data, {
+                await axios.post(endpoint, data, {
                   cancelToken: this.axiosCancel.token,
                 })
               ).data.wikis;
@@ -196,7 +196,7 @@ class Wikis extends Component {
       async () => {
         try {
           const wikis = (
-            await Axios.delete(`${BASE_URL}/wikis/pages`, {
+            await axios.delete(`${BASE_URL}/wikis/pages`, {
               data: { title: allWikis[currentPage].title },
               cancelToken: this.axiosCancel.token,
             })
@@ -221,6 +221,25 @@ class Wikis extends Component {
     });
   };
 
+  oauthCheck = async () => {
+    try {
+      this.setState({
+        spinner: "Connecting to GitHub..."
+      }, async ()=>{
+        const check = (await axios.get(`${BASE_URL}/wikis/oauth-check`)).data
+        if (check.redirect){
+          window.location = check.redirect_url;
+        } else {
+          this.setState({
+            spinner: ""
+          })
+        }
+      })
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   handleViewHistoryItem = async (commit) => {
     const title = this.state.allWikis[this.state.currentPage].title;
     this.setState(
@@ -233,7 +252,7 @@ class Wikis extends Component {
             spinner: "",
             viewHistory: false,
             allWikis: (
-              await Axios.get(
+              await axios.get(
                 `${BASE_URL}/wikis/pages?title=${title}&ref=${commit}`,
                 { cancelToken: this.axiosCancel.token }
               )
@@ -263,6 +282,7 @@ class Wikis extends Component {
           allWikis={allWikis}
           wikis={this.state.wikis}
           spinner={this.state.spinner}
+          oauthCheck={this.oauthCheck}
         >
           <React.Fragment>
             {!editorMode && allWikis.length !== 0 && (
@@ -320,7 +340,7 @@ class Wikis extends Component {
   }
 
   componentWillUnmount() {
-    this.axiosCancel.cancel("Axios request cancelled - Component Unmounted");
+    this.axiosCancel.cancel("axios request cancelled - Component Unmounted");
   }
 }
 

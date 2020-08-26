@@ -31,12 +31,10 @@ const Layout = (props) => (
         {props.allWikis === "NO_ACCESS_TOKEN" ? (
           <div className="wikis-not-found">
             {props.isAdmin === "true" ? (
-              <a href={`${BASE_URL}/wikis/oauth-check`}>
-                <Button variant="light">
-                  <GitHubIcon />
-                  Connect Github
-                </Button>
-              </a>
+              <Button variant="light" onClick={props.oauthCheck}>
+                <GitHubIcon />
+                Connect Github
+              </Button>
             ) : (
               "Nothing here Yet"
             )}
