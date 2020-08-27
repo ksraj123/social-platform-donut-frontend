@@ -1,5 +1,6 @@
 import React from "react";
 import "./Page.scss";
+import Moment from 'react-moment'
 import History from "../History/History";
 import ReactMarkdown from "react-markdown";
 import Button from "react-bootstrap/Button";
@@ -44,9 +45,7 @@ const Page = (props) => {
         <div className="last-edited">
           <span>
             Last Edited by {allWikis[currentPage]?.history[0]?.user?.login} at{" "}
-            {new Date(
-              allWikis[currentPage]?.history[0]?.created_at
-            ).toDateString()}
+            <Moment format="DD MMM YYYY">{allWikis[currentPage]?.history[0]?.created_at}</Moment>
           </span>
           <Button variant="light" onClick={handleViewHistory}>
             <HistoryIcon />
