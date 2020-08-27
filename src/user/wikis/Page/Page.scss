@@ -18,7 +18,7 @@
         .btn {
           display: flex;
           align-items: center;
-          padding-left: 0.25rem !important;
+          padding-left: 0.25rem;
         }
       }
       .last-edited {
@@ -27,7 +27,7 @@
         justify-content: space-between;
         .btn {
           span {
-            padding-left: 0.25rem !important;
+            padding-left: 0.25rem;
           }
         }
       }
