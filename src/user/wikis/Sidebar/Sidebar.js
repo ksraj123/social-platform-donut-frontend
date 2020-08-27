@@ -5,6 +5,7 @@ import PagesDisplay from "./PagesDisplay/PagesDisplay";
 import EditButton from "@material-ui/icons/EditOutlined";
 
 const Sidebar = (props) => {
+  const { pages, setView, isAdmin, edit, content } = props;
   useEffect(() => {
     const allLinks = document.querySelectorAll(".wiki-sidebar a");
     Array.prototype.forEach.call(allLinks, (link) => {
@@ -12,12 +13,12 @@ const Sidebar = (props) => {
       if (text[0] === "$") {
         text = text.substring(1, text.lastIndexOf("$"));
         link.textContent = text;
-        if (props.pages.filter((page) => page.title === text).length === 0)
+        if (pages.filter((page) => page.title === text).length === 0)
           link.style.color = "red";
         link.addEventListener("click", (evt) => {
           evt.preventDefault();
           evt.stopPropagation();
-          props.setView(link.textContent);
+          setView(link.textContent);
         });
       } else {
         link.innerHTML = `<span>🔗</span>${link.textContent}`;
@@ -26,18 +27,15 @@ const Sidebar = (props) => {
   }, []);
   return (
     <div className="wiki-sidebar">
-      <PagesDisplay
-        pages={props.pages.slice(1)}
-        setView={props.setView}
-      />
+      <PagesDisplay pages={pages.slice(1)} setView={setView} />
       <div className="wiki-sidebar-navigator">
-        {props.isAdmin && (
+        {isAdmin && (
           <EditButton
-            onClick={() => props.edit(false, true)}
+            onClick={() => edit(false, true)}
             className="edit-button"
           />
         )}
-        <ReactMarkdown source={props.content} />
+        <ReactMarkdown source={content} />
       </div>
     </div>
   );

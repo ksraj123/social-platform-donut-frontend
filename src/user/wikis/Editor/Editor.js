@@ -10,33 +10,39 @@ import ReactMde from "react-mde";
 import "./Editor.scss";
 
 class Editor extends Component {
-  state = {
-    comments: "",
-    selectedTab: "write",
-    title: this.props.page?.title,
-    content: this.props.page?.content,
-  };
+  constructor(props) {
+    super(props);
+    const { page } = this.props;
+    this.state = {
+      comments: "",
+      selectedTab: "write",
+      title: page?.title,
+      content: page?.content,
+    };
+  }
 
   handleSave = () => {
-    this.props.save(
+    const { title, content, comments } = this.state;
+    const { page, newPage, sidebar, save } = this.props;
+    save(
       {
-        title: this.state.title,
-        content: this.state.content,
-        comments: this.state.comments,
-        history: this.props.page?.history
+        title,
+        content,
+        comments,
+        history: page?.history,
       },
-      this.props.newPage,
-      this.props.sidebar
+      newPage,
+      sidebar
     );
   };
-  
-  setContent = content => this.setState({ content });
-  
-  setTitle = evt => this.setState({ title: evt.target.value });
 
-  setSelectedTab = selectedTab => this.setState({ selectedTab });
+  setContent = (content) => this.setState({ content });
 
-  setComments = evt => this.setState({ comments: evt.target.value });
+  setTitle = (evt) => this.setState({ title: evt.target.value });
+
+  setSelectedTab = (selectedTab) => this.setState({ selectedTab });
+
+  setComments = (evt) => this.setState({ comments: evt.target.value });
 
   render() {
     const converter = new Showdown.Converter({
@@ -45,20 +51,22 @@ class Editor extends Component {
       strikethrough: true,
       simplifiedAutoLink: true,
     });
-
+    const { title, content, selectedTab, comments } = this.state;
+    const { deletePage, sidebar, newPage, page, cancel } = this.props;
     return (
       <div className="wiki-editor">
         <div className="wikis-top-controls">
-          <Button 
-            variant="outline-danger" 
-            onClick={this.props.delete} 
-            disabled={this.props.sidebar || this.props.newPage || this.props.page.title==="Home"}>
+          <Button
+            variant="outline-danger"
+            onClick={deletePage}
+            disabled={sidebar || newPage || page.title === "Home"}
+          >
             <span className="vc">
               <DeleteOutlinedIcon />
               Delete
             </span>
           </Button>
-          <Button onClick={this.props.cancel} variant="light">
+          <Button onClick={cancel} variant="light">
             <span className="vc">
               <CancelButton />
               Cancel
@@ -71,28 +79,29 @@ class Editor extends Component {
             as="input"
             name="pageTitle"
             className="searchbar"
-            value={this.state.title}
+            value={title}
             onChange={this.setTitle}
-            readOnly={!this.props.newPage}
+            readOnly={!newPage}
           />
         </Form>
         <ReactMde
           onChange={this.setContent}
-          value={this.state.content}
+          value={content}
           onTabChange={this.setSelectedTab}
-          selectedTab={this.state.selectedTab}
-          generateMarkdownPreview={markdown =>
+          selectedTab={selectedTab}
+          generateMarkdownPreview={(markdown) =>
             Promise.resolve(converter.makeHtml(markdown))
           }
         />
         <Form>
           <Form.Label className="field-title">Comments</Form.Label>
-          <Form.Control 
-            as="input" 
+          <Form.Control
+            as="input"
             name="comments"
             className="searchbar"
-            value={this.state.comments}
-            onChange={this.setComments} />
+            value={comments}
+            onChange={this.setComments}
+          />
         </Form>
         <div className="wikis-top-controls">
           <Button variant="primary" onClick={this.handleSave}>

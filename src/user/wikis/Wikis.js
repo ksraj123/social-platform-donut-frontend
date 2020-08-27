@@ -35,8 +35,9 @@ class Wikis extends Component {
   }
 
   componentDidMount() {
+    const { getWikis } = this.props
     setTimeout(() => {
-      this.props.getWikis();
+      getWikis();
     });
   }
 
@@ -57,7 +58,8 @@ class Wikis extends Component {
 
   setView = async (page, ref) => {
     let pos = 0;
-    this.state.allWikis.forEach((ele, index) => {
+    const { allWikis } = this.state
+    allWikis.forEach((ele, index) => {
       if (ele.title === page) pos = index;
     });
     if (pos) {
@@ -241,7 +243,8 @@ class Wikis extends Component {
   };
 
   handleViewHistoryItem = async (commit) => {
-    const title = this.state.allWikis[this.state.currentPage].title;
+    const { allWikis, currentPage } = this.state
+    const title = allWikis[currentPage].title;
     this.setState(
       {
         spinner: "Time Travelling...",
@@ -267,8 +270,12 @@ class Wikis extends Component {
 
   render() {
     const {
+      wikis,
+      spinner,
       allWikis,
       editorMode,
+      viewHistory,
+      historyMode,
       currentPage,
       sidebarEditor,
       newPageEditor,
@@ -280,8 +287,8 @@ class Wikis extends Component {
         <Layout
           isAdmin={isAdmin}
           allWikis={allWikis}
-          wikis={this.state.wikis}
-          spinner={this.state.spinner}
+          wikis={wikis}
+          spinner={spinner}
           oauthCheck={this.oauthCheck}
         >
           <React.Fragment>
@@ -291,8 +298,8 @@ class Wikis extends Component {
                   isAdmin={isAdmin}
                   allWikis={allWikis}
                   currentPage={currentPage}
-                  viewHistory={this.state.viewHistory}
-                  historyMode={this.state.historyMode}
+                  viewHistory={viewHistory}
+                  historyMode={historyMode}
                   handleEditorMode={this.handleEditorMode}
                   handleViewHistory={this.handleViewHistory}
                   handleViewHistoryItem={this.handleViewHistoryItem}
@@ -311,7 +318,7 @@ class Wikis extends Component {
                 save={this.handleSave}
                 newPage={newPageEditor}
                 sidebar={sidebarEditor}
-                delete={this.deletePage}
+                deletePage={this.deletePage}
                 cancel={this.cancelEditor}
                 page={
                   newPageEditor
