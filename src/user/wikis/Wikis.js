@@ -9,6 +9,7 @@ import Sidebar from "./Sidebar/Sidebar";
 import { BASE_URL } from "../../actions/baseApi";
 import { getWikis } from "../../actions/wikisAction";
 import { ToastContainer, toast } from "react-toastify";
+import { fetchPage, saveChangesToPage, deletePageRequest, viewPageFromHistory } from "../../utils/wikis";
 
 class Wikis extends Component {
   constructor(props) {
@@ -67,27 +68,7 @@ class Wikis extends Component {
         {
           spinner: "Switing Page.... ",
         },
-        async () => {
-          try {
-            let wikis = (
-              await axios.get(`${BASE_URL}/wikis/pages?title=${page}`, {
-                cancelToken: this.axiosCancel.token,
-              })
-            ).data.wikis;
-            wikis.forEach((ele, index) => {
-              if (ele.title === page.title) pos = index;
-            });
-            this.setState({
-              spinner: "",
-              allWikis: wikis,
-              currentPage: pos,
-              viewHistory: false,
-              historyMode: false,
-            });
-          } catch (err) {
-            console.log(err.message);
-          }
-        }
+        fetchPage.bind(this, page, pos)
       );
     } else {
       this.handleEditorMode(true);
@@ -96,66 +77,19 @@ class Wikis extends Component {
 
   handleSave = async (page, newPage = false, sidebar = false) => {
     const { allWikis } = this.state;
-    const endpoint = `${BASE_URL}/wikis/pages`;
-    const data = {
-      title: page.title,
-      content: page.content,
-      comments: page.comments,
-    };
-    const findIndexOfPage = (arr, page) => {
-      let pos = 0;
-      arr.forEach((ele, index) => {
-        if (ele.title === page.title) pos = index;
-      });
-      return pos;
-    };
     if (!newPage && !sidebar) {
       this.setState(
         {
           spinner: "Saving... ",
         },
-        async () => {
-          try {
-            const wikis = (
-              await axios.put(endpoint, data, {
-                cancelToken: this.axiosCancel.token,
-              })
-            ).data.wikis;
-            const index = findIndexOfPage(wikis, page);
-            this.setState({
-              spinner: "",
-              editorMode: false,
-              currentPage: index,
-              allWikis: [...wikis],
-            });
-          } catch (err) {
-            console.log(err.message);
-          }
-        }
+        saveChangesToPage.bind(this, page, newPage, sidebar)
       );
     } else if (sidebar) {
       this.setState(
         {
           spinner: "Saving...",
         },
-        async () => {
-          try {
-            const wikis = (
-              await axios.put(endpoint, data, {
-                cancelToken: this.axiosCancel.token,
-              })
-            ).data.wikis;
-            this.setState({
-              spinner: "",
-              currentPage: 1,
-              editorMode: false,
-              allWikis: [...wikis],
-              sidebarEditor: false,
-            });
-          } catch (err) {
-            console.log(err.message);
-          }
-        }
+        saveChangesToPage.bind(this, page, newPage, sidebar)
       );
     } else {
       if (allWikis.filter((ele) => ele.title === page.title).length === 0) {
@@ -163,25 +97,7 @@ class Wikis extends Component {
           {
             spinner: "Creating New Page...",
           },
-          async () => {
-            try {
-              const wikis = (
-                await axios.post(endpoint, data, {
-                  cancelToken: this.axiosCancel.token,
-                })
-              ).data.wikis;
-              const index = findIndexOfPage(wikis, page);
-              this.setState({
-                spinner: "",
-                editorMode: false,
-                currentPage: index,
-                allWikis: [...wikis],
-                newPageEditor: false,
-              });
-            } catch (err) {
-              console.log(err.message);
-            }
-          }
+          saveChangesToPage.bind(this, page, newPage, sidebar)
         );
       } else {
         toast.error("Page with that title already exsits!");
@@ -195,24 +111,7 @@ class Wikis extends Component {
       {
         spinner: "Deleting Page...",
       },
-      async () => {
-        try {
-          const wikis = (
-            await axios.delete(`${BASE_URL}/wikis/pages`, {
-              data: { title: allWikis[currentPage].title },
-              cancelToken: this.axiosCancel.token,
-            })
-          ).data.wikis;
-          this.setState({
-            spinner: "",
-            currentPage: 1,
-            editorMode: false,
-            allWikis: [...wikis],
-          });
-        } catch (err) {
-          console.log(err.message);
-        }
-      }
+      deletePageRequest.bind(this, allWikis, currentPage)
     );
   };
 
@@ -249,22 +148,7 @@ class Wikis extends Component {
       {
         spinner: "Time Travelling...",
       },
-      async () => {
-        try {
-          this.setState({
-            spinner: "",
-            viewHistory: false,
-            allWikis: (
-              await axios.get(
-                `${BASE_URL}/wikis/pages?title=${title}&ref=${commit}`,
-                { cancelToken: this.axiosCancel.token }
-              )
-            ).data.wikis,
-          });
-        } catch (err) {
-          console.log(err.message);
-        }
-      }
+      viewPageFromHistory.bind(this, title, commit)
     );
   };
 
