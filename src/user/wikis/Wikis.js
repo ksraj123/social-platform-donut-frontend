@@ -137,6 +137,7 @@ class Wikis extends Component {
         }
       })
     } catch (err) {
+      toast.error('Oops! Something went wrong!, could not connect!')
       console.log(err.message);
     }
   };
