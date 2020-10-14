@@ -52,6 +52,7 @@
     "react-switch": "^5.0.1",
     "react-tiny-fab": "^3.5.0",
     "react-toastify": "^6.0.5",
+    "react-websocket": "^2.1.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "showdown": "^1.9.1",
